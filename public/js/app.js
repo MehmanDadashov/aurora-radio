@@ -324,10 +324,11 @@ function isPremium() { return S.premium && S.premiumUntil > Date.now(); }
 /* ---------------- скачивание приложения ---------------- */
 const DL_FILES = {
   android: 'aurora-radio-android.apk',
-  windows: 'aurora-radio-windows-setup.exe',
+  windows: 'AURORA-RADIO-win-x64-Setup.exe',
+  windows_portable: 'AURORA-RADIO-win-x64-Portable.exe',
   linux: 'aurora-radio-linux-x86_64.AppImage',
   deb: 'aurora-radio-linux-amd64.deb',
-  macos: 'aurora-radio-macos-x64.zip',
+  macos: 'AURORA-RADIO-x64.zip',
 };
 const DL_BASE = 'https://github.com/MehmanDadashov/aurora-radio/releases/download/v3.1.0/';
 function downloadHTML() {
@@ -338,6 +339,7 @@ function downloadHTML() {
     { icon: '🐧', os: t('dl.linux'), size: t('dl.sizeAppImage',{n:'128'}), url: DL_BASE + DL_FILES.linux, note: t('dl.noteLinux') },
     { icon: '📦', os: t('dl.linux') + ' .deb', size: t('dl.sizeDeb',{n:'89'}), url: DL_BASE + DL_FILES.deb, note: t('dl.noteDeb') },
     { icon: '🍎', os: t('dl.macos'), size: t('dl.sizeZip',{n:'122'}), url: DL_BASE + DL_FILES.macos, note: t('dl.noteMac') },
+    { icon: '🪟', os: t('dl.windows') + ' · Portable', size: t('dl.sizeInstaller',{n:'90'}), url: DL_BASE + DL_FILES.windows_portable, note: t('dl.noteWin') },
     { icon: '🌐', os: t('dl.web'), size: t('dl.noInstall'), url: 'https://radio.ai-studio.se/', note: t('dl.anyBrowser'), web: true },
   ];
   return `<div class="dl-grid">${cards.map(c => `
