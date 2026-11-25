@@ -42,14 +42,14 @@ public class MainActivity extends BridgeActivity {
         }
     }
 
-    /** Run the consent update, then initialise the Mobile Ads SDK. */
+    /** UMP-согласие (GDPR) → форма при необходимости → инициализация Mobile Ads. */
     static void bootAds(Activity activity) {
         ConsentRequestParameters params = new ConsentRequestParameters.Builder()
                 .setTagForUnderAgeOfConsent(false)
                 .build();
         ConsentInformation ci = UserMessagingPlatform.getConsentInformation(activity);
         ci.requestConsentInfoUpdate(activity, params,
-                () -> initSdk(activity),
+                () -> UserMessagingPlatform.loadAndShowConsentFormIfRequired(activity, formError -> initSdk(activity)),
                 err -> {
                     Log.w(TAG, "consent update failed: " + err.getMessage());
                     initSdk(activity);

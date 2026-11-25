@@ -331,7 +331,7 @@ const DL_FILES = {
 };
 const DL_BASE = 'https://github.com/MehmanDadashov/aurora-radio/releases/download/v3.1.0/';
 function downloadHTML() {
-  const ver = '3.1.0';
+  const ver = '3.1.1';
   const cards = [
     { icon: '📱', os: t('dl.android'), size: t('dl.sizeApk',{n:'22'}), url: DL_BASE + DL_FILES.android, note: t('dl.noteAndroid') },
     { icon: '🪟', os: t('dl.windows'), size: t('dl.sizeInstaller',{n:'100'}), url: DL_BASE + DL_FILES.windows, note: t('dl.noteWin') },
