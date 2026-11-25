@@ -90,9 +90,47 @@ public class AuroraAdsPlugin extends Plugin {
             lp.gravity = Gravity.BOTTOM;
             bannerView.setLayoutParams(lp);
             parent.addView(bannerView);
+            // Диагностика: ошибки/успехи загрузки уходят в JS как события
+            bannerView.setAdListener(new com.google.android.gms.ads.AdListener() {
+                @Override
+                public void onAdFailedToLoad(LoadAdError error) {
+                    Log.w("AuroraAds", "banner failed: " + error.getCode() + " " + error.getMessage());
+                    emit("ad-banner-error", error.getCode(), String.valueOf(error.getMessage()));
+                }
+                @Override
+                public void onAdLoaded() {
+                    Log.i("AuroraAds", "banner loaded");
+                    emit("ad-banner-loaded", 0, "");
+                }
+            });
             bannerView.loadAd(new AdRequest.Builder().build());
             call.resolve(ok());
         });
+    }
+
+    /** Событие в WebView: window.dispatchEvent(new CustomEvent(name, {detail:{code,message}})) */
+    private void emit(String name, int code, String message) {
+        try {
+            android.webkit.WebView wv = getBridge() != null ? getBridge().getWebView() : null;
+            if (wv == null) return;
+            String safe = message == null ? "" : message.replace("'", "").replace("\n", " ");
+            String js = "(function(){try{window.dispatchEvent(new CustomEvent('" + name +
+                    "',{detail:{code:" + code + ",message:'" + safe + "'}}));}catch(e){}})()";
+            wv.post(() -> wv.evaluateJavascript(js, null));
+        } catch (Throwable ignored) { }
+    }
+
+    /** Повторный показ формы настроек рекламы (UMP) — если клиент закрыл согласие. */
+    @PluginMethod
+    public void showPrivacyOptions(PluginCall call) {
+        Activity a = getActivity();
+        if (a == null) { call.reject("no activity"); return; }
+        a.runOnUiThread(() -> {
+            com.google.android.ump.UserMessagingPlatform.showPrivacyOptionsForm(a, formError -> {
+                Log.w("AuroraAds", "privacy options: " + (formError != null ? formError.getMessage() : "dismissed"));
+            });
+        });
+        call.resolve(ok());
     }
 
     @PluginMethod

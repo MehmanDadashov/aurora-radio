@@ -331,7 +331,7 @@ const DL_FILES = {
 };
 const DL_BASE = 'https://github.com/MehmanDadashov/aurora-radio/releases/download/v3.1.0/';
 function downloadHTML() {
-  const ver = '3.1.2';
+  const ver = '3.1.3';
   const cards = [
     { icon: '📱', os: t('dl.android'), size: t('dl.sizeApk',{n:'22'}), url: DL_BASE + DL_FILES.android, note: t('dl.noteAndroid') },
     { icon: '🪟', os: t('dl.windows'), size: t('dl.sizeInstaller',{n:'100'}), url: DL_BASE + DL_FILES.windows, note: t('dl.noteWin') },
@@ -602,6 +602,28 @@ const Ad = {
     } catch (e) { return false; }
   },
 };
+
+// --- диагностика баннера: коды ошибок AdMob + ретраи (Android) ---
+window.addEventListener('ad-banner-error', (e) => {
+  const d = e.detail || {};
+  const code = d.code;
+  const map = {
+    0: 'внутренняя ошибка SDK',
+    1: 'неверный запрос (ID/юнит)',
+    2: 'сеть недоступна',
+    3: 'нет объявлений (no fill)'
+  };
+  toast('Реклама: ' + (map[code] || ('код ' + code)));
+  Ad.bannerOn = false;
+  Ad.retry = (Ad.retry || 0) + 1;
+  if (Ad.retry <= 3) {
+    setTimeout(() => { if (!isPremium()) Ad.showBanner(); }, 60000);
+  }
+});
+window.addEventListener('ad-banner-loaded', () => {
+  Ad.retry = 0;
+  toast('Баннер загружен');
+});
 
 window.addEventListener('onRewarded', () => {
   S.premium = true; S.premiumUntil = Date.now() + 864e5;
