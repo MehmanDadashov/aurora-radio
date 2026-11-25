@@ -1,0 +1,18 @@
+{
+  "name": "AURORA RADIO",
+  "short_name": "Aurora Radio",
+  "description": "73,000+ radio stations of the world: music, news, sports, talk. Free.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#12071f",
+  "theme_color": "#12071f",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

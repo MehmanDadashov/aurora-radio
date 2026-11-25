@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "177629118812",
+    "project_id": "ai-studio-apps-radio",
+    "storage_bucket": "ai-studio-apps-radio.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:177629118812:android:ff2a7215f5df0ae9e44199",
+        "android_client_info": {
+          "package_name": "se.aistudio.radio"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSy...yWh4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

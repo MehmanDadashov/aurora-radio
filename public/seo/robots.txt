@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://radio.ai-studio.se/seo/sitemap.xml
+
+# Aurora Radio — Free live radio player
+# No private areas to disallow

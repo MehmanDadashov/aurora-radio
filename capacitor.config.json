@@ -1,0 +1,13 @@
+{
+  "appId": "se.aistudio.radio",
+  "appName": "Aurora Radio",
+  "webDir": "public",
+  "backgroundColor": "#12071f",
+  "android": {
+    "allowMixedContent": true,
+    "backgroundColor": "#12071f"
+  },
+  "server": {
+    "url": "https://radio.ai-studio.se/"
+  }
+}

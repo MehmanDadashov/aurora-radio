@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Aurora Radio</string>
+    <string name="title_activity_main">Aurora Radio</string>
+    <string name="package_name">se.aistudio.radio</string>
+    <string name="custom_url_scheme">se.aistudio.radio</string>
+
+    <!-- Monetization: one ad unit PER FORMAT. Never reuse a single unit for
+         banner/interstitial/rewarded — AdMob units are format-bound and
+         cross-format requests do not fill.
+
+         Replace with real units from AdMob console
+         (https://apps.admob.com -> Apps -> Aurora Radio -> Ad units):
+         Banner, Interstitial, Rewarded. The Google test defaults keep the
+         build serving test ads until then. -->
+    <string name="ad_unit_banner" translatable="false">ca-app-pub-1872308537877958/6934071406</string>
+    <string name="ad_unit_interstitial" translatable="false">ca-app-pub-1872308537877958/1014717584</string>
+    <string name="ad_unit_rewarded" translatable="false">ca-app-pub-1872308537877958/9220063557</string>
+</resources>

@@ -1,0 +1,13 @@
+{
+  "projects": {},
+  "targets": {
+    "ai-studio-apps-radio": {
+      "hosting": {
+        "radio-aurora": [
+          "radio-aurora"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

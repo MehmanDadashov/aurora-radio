@@ -1,0 +1,9 @@
+{
+  "projectId": "ai-studio-apps-radio",
+  "appId": "1:177629118812:web:2010b1755f7af34ae44199",
+  "authDomain": "ai-studio-apps-radio.firebaseapp.com",
+  "storageBucket": "ai-studio-apps-radio.firebasestorage.app",
+  "messagingSenderId": "177629118812",
+  "measurementId": "G-DKHQFG5EP0",
+  "note": "apiKey хранится в Firebase Console; веб-плеер не использует Firebase SDK — только AdMob через Capacitor в APK"
+}
