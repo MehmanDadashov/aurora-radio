@@ -29,6 +29,7 @@ public class RadioPlaybackService extends Service {
     private static final int NOTIF_ID = 4201;
 
     private PowerManager.WakeLock wakeLock;
+    private android.net.wifi.WifiManager.WifiLock wifiLock;
     private MediaSessionCompat session;
     private String currentTitle = "Aurora Radio";
     private String currentBody = "Идёт воспроизведение";
@@ -39,11 +40,20 @@ public class RadioPlaybackService extends Service {
         super.onCreate();
         ensureChannel();
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        if (pm != null) {
-            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AuroraRadio::Playback");
-            wakeLock.setReferenceCounted(false);
-            wakeLock.acquire();
-        }
+                if (pm != null) {
+                    wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "aurora_radio:playback");
+                    wakeLock.setReferenceCounted(false);
+                    wakeLock.acquire();
+                }
+                // WiFi НЕ должен засыпать при выключенном экране — иначе поток обрывается.
+                android.net.wifi.WifiManager wm =
+                        (android.net.wifi.WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+                if (wm != null) {
+                    wifiLock = wm.createWifiLock(android.net.wifi.WifiManager.WIFI_MODE_FULL_HIGH_PERF,
+                            "aurora_radio:stream");
+                    wifiLock.setReferenceCounted(false);
+                    wifiLock.acquire();
+                }
         initSession();
     }
 
@@ -211,6 +221,9 @@ public class RadioPlaybackService extends Service {
         }
         if (wakeLock != null && wakeLock.isHeld()) {
             wakeLock.release();
+        }
+        if (wifiLock != null && wifiLock.isHeld()) {
+            wifiLock.release();
         }
         AuroraMediaBridge.setPlaying(false);
         super.onDestroy();

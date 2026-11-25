@@ -331,7 +331,7 @@ const DL_FILES = {
 };
 const DL_BASE = 'https://github.com/MehmanDadashov/aurora-radio/releases/download/v3.1.0/';
 function downloadHTML() {
-  const ver = '3.1.1';
+  const ver = '3.1.2';
   const cards = [
     { icon: '📱', os: t('dl.android'), size: t('dl.sizeApk',{n:'22'}), url: DL_BASE + DL_FILES.android, note: t('dl.noteAndroid') },
     { icon: '🪟', os: t('dl.windows'), size: t('dl.sizeInstaller',{n:'100'}), url: DL_BASE + DL_FILES.windows, note: t('dl.noteWin') },
@@ -754,7 +754,14 @@ function bind() {
 
   // --- аудио-события: фоновое воспроизведение + переподключение ---
   audio.addEventListener('playing', () => { setPlaying(true); persistSession(); });
-  audio.addEventListener('pause', () => setPlaying(false));
+  audio.addEventListener('pause', () => {
+      // Пауза элемента ≠ остановка клиентом: сервис НЕ гасим (системная пауза при
+      // уходе в фон не должна убивать фоновое воспроизведение). UI-only синхронизация.
+      const on = $('#bar'); if (on) on.classList.add('paused');
+      $('#barPlay') && ($('#barPlay').textContent = '▶');
+      $('#cPlay') && ($('#cPlay').textContent = '▶');
+      $('#sheet') && $('#sheet').classList.remove('playing');
+    });
   audio.addEventListener('ended', () => { if (S.repeat) audio.play().catch(() => {}); else nextStation(true); });
   audio.addEventListener('error', () => {
     setPlaying(false);
@@ -775,24 +782,26 @@ function bind() {
     }
   });
 
-  // --- MediaSession: управление с экрана блокировки / ОС ---
-  if ('mediaSession' in navigator) {
-    navigator.mediaSession.setActionHandler('play', () => { audio.play().catch(() => {}); });
-    navigator.mediaSession.setActionHandler('pause', () => { audio.pause(); });
-    navigator.mediaSession.setActionHandler('previoustrack', prevStation);
-    navigator.mediaSession.setActionHandler('nexttrack', () => nextStation(false));
-  }
+  // --- MediaSession веба ОТКЛЮЧЕНА: транспорт управляется нативным сервисом
+    // (ForegroundRadio/RadioPlaybackService) — иначе на экране блокировки
+    // конфликтуют две сессии и система останавливает воспроизведение. ---
 
-  // --- видимость: НЕ ставим на паузу при скрытии вкладки ---
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      // сохраняем сессию — продолжим при возврате
-      if (S.playing) persistSession();
-    } else if (S.playing && audio.paused && !Player.userStopped) {
-      // при возврате вкладки возобновляем, если оборвалось
-      audio.play().catch(() => {});
-    }
-  });
+    // --- видимость: НЕ ставим на паузу при скрытии вкладки + страховка сервиса ---
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        // сохраняем сессию — продолжим при возврате
+        if (S.playing) persistSession();
+      } else if (S.playing && audio.paused && !Player.userStopped) {
+        // при возврате вкладки возобновляем, если оборвалось
+        audio.play().catch(() => {});
+        // страховка: если foreground-сервис почему-то остановлен — поднимаем
+        if (window.ForegroundRadio && !audio.paused) {
+          const st = S.playing || {};
+          window.ForegroundRadio.start(st.name || 'Aurora Radio',
+            [st.country, st.genre].filter(Boolean).join(' · ') || 'Идёт воспроизведение');
+        }
+      }
+    });
 
   // --- настройки ---
   $('#logoQ').addEventListener('change', e => { S.logoQ = e.target.value; LS.set('logoQ', S.logoQ); refreshGrids(); });
