@@ -61,5 +61,26 @@ public class MainActivity extends BridgeActivity {
                 Log.i(TAG, "MobileAds initialized: " + status));
         // Тестовые устройства НЕ помечаем: на телефоне пользователя AdMob должен
         // отдавать реальные баннеры, иначе вместо рекламы виден «Test Ad».
+        reportConsent(activity);
+    }
+
+    /**
+     * Диагностика в UI: статус согласия UMP + разрешение onAdViewed в JS-тост.
+     * OBTAINED/NOT_REQUIRED — реклама может показываться; REQUIRED — показать форму;
+     * UNKNOWN — нужно нажать «Настройки рекламы» в приложении.
+     */
+    private static void reportConsent(Activity activity) {
+        try {
+            ConsentInformation ci = UserMessagingPlatform.getConsentInformation(activity);
+            String state = String.valueOf(ci.getConsentStatus());
+            boolean canAsk = ci.canRequestAds();
+            android.webkit.WebView wv = (activity instanceof MainActivity)
+                    ? ((MainActivity) activity).getBridge().getWebView() : null;
+            if (wv != null) {
+                wv.post(() -> wv.evaluateJavascript(
+                        "(function(){try{window.dispatchEvent(new CustomEvent('ad-consent',{detail:{state:'" + state +
+                                "',canRequestAds:" + canAsk + "}}));}catch(e){}})()", null));
+            }
+        } catch (Throwable ignored) { }
     }
 }

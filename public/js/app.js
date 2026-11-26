@@ -332,7 +332,7 @@ const DL_FILES = {
 };
 const DL_BASE = 'https://github.com/MehmanDadashov/aurora-radio/releases/download/v3.1.0/';
 function downloadHTML() {
-  const ver = '3.1.3';
+  const ver = '3.1.4';
   const cards = [
     { icon: '📱', os: t('dl.android'), size: t('dl.sizeApk',{n:'22'}), url: DL_BASE + DL_FILES.android, note: t('dl.noteAndroid') },
     { icon: '🪟', os: t('dl.windows'), size: t('dl.sizeInstaller',{n:'100'}), url: DL_BASE + DL_FILES.windows, note: t('dl.noteWin') },
@@ -625,6 +625,17 @@ window.addEventListener('ad-banner-error', (e) => {
 window.addEventListener('ad-banner-loaded', () => {
   Ad.retry = 0;
   toast('Баннер загружен');
+});
+
+// Статус согласия GDPR (UMP) — виден пользователю как тост при старте рекламы
+window.addEventListener('ad-consent', (e) => {
+  const d = e.detail || {};
+  const map = {
+    OBTAINED: 'согласие получено', NOT_REQUIRED: 'согласие не требуется',
+    REQUIRED: 'требуется согласие — заполни форму', UNKNOWN: 'статус неизвестен'
+  };
+  const txt = (map[d.state] || d.state) + (d.canRequestAds ? '' : ' · нельзя запрашивать');
+  toast('Реклама: ' + txt);
 });
 
 window.addEventListener('onRewarded', () => {
